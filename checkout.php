@@ -7,7 +7,7 @@ $con = $db->conectar();
 
 $productos = isset($_SESSION['carrito']['productos']) ? $_SESSION['carrito']['productos'] : null;
 
-print_r($_SESSION);
+//print_r($_SESSION);
 
 $lista_carrito = array();
 
@@ -21,8 +21,6 @@ if ($productos != null) {
 }
 
 //session_destroy();
-
-//print_r($_SESSION);
 ?>
 
 <!doctype html>
@@ -107,7 +105,7 @@ if ($productos != null) {
 
                                     <td>
                                         <input type="number" min="1" max="10" step="1" value="<?php echo $cantidad ?>"
-                                            size="5" $id="$cantidad_<?php echo $_id; ?>" onchange="">
+                                            size="5" $id="$cantidad_<?php echo $_id; ?>" onchange="actualizaCantidad(this.value, <?php echo $_id; ?>)">
                                     </td>
 
                                     <td>
@@ -116,7 +114,7 @@ if ($productos != null) {
                                     </td>
 
                                     <td><a href="#" id="eliminar" class="btn btn-warning btn-sm" data-bs-id="<?php echo $_id; ?>"
-                                            data-bs-toggle="modal" data-bs-target="eliminaModal">Eliminar</a></td>
+                                            data-bs-toggle="modal" data-bs-target="#eliminaModal">Eliminar</a></td>
                                 </tr>
 
                             <?php } ?>
@@ -143,17 +141,46 @@ if ($productos != null) {
         </div>
     </main>
 
+            <!-- Modal -->
+        <div class="modal fade" id="eliminaModal" tabindex="-1" aria-labelledby="eliminaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="eliminaModalLabel">Alerta</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Desea eliminar el producto de la lista?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button id="btn-elimina" type="button" class="btn btn-danger" onclick="eliminar()">Eliminar</button>
+            </div>
+            </div>
+        </div>
+        </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
 
 
     <script>
-        function addProducto(id, token) {
-            let url = 'clases/carrito.php'
+
+        let eliminaModal = document.getElementById('eliminaModal')
+        eliminaModal.addEventListener('show.bs.modal', function(event){
+                let button = event.relatedTarget
+                let id = button.getAttribute('data-bs-id')
+                let buttonElimina = eliminaModal.querySelector('.modal-footer #btn-elimina')
+                buttonElimina.value = id
+        })
+
+        function actualizaCantidad(cantidad, id) {
+            let url = 'clases/actualizar_carrito.php'
             let formData = new FormData()
+            formData.append('action', 'agregar');
             formData.append('id', id);
-            formData.append('token', token)
+            formData.append('cantidad', cantidad)
 
             fetch(url, {
                     method: 'POST',
@@ -162,8 +189,43 @@ if ($productos != null) {
                 }).then(response => response.json())
                 .then(data => {
                     if (data.ok) {
-                        let elemento = document.getElementById("num_cart")
-                        elemento.innerHTML = data.numero
+
+                        let divsubtotal = document.getElementById('subtotal_' + id)
+                        divsubtotal.innerHTML = data.sub    
+
+                        let total = 0.00
+                        let list = document.getElementsByName('subtotal[]')
+
+                        for (let i = 0; i < list.length; i++) {
+                            total += parseFloat(list[i].innerHTML.replace(/[$,]/g, ''))
+                        }
+
+                        total = new  Intl.NumberFormat('en-US', {
+                            minimumFractionDigits: 2
+                        }).format(total)
+                        document.getElementById('total').innerHTML = '<?php echo MONEDA; ?>' + total 
+                    }
+                })
+        }
+
+                function eliminar() {
+
+                    let botonElimina = document.getElementById('btn-elimina')  
+                    let id = botonElimina.value
+
+            let url = 'clases/actualizar_carrito.php'
+            let formData = new FormData()
+            formData.append('action', 'eliminar');
+            formData.append('id', id);
+
+            fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'cors',
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        location.reload()
                     }
                 })
         }
