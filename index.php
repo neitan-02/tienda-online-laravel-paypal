@@ -11,7 +11,7 @@ $resultado = $sql->fetchAll(PDO::FETCH_ASSOC);
 
 //session_destroy();
 
-print_r($_SESSION);
+//print_r($_SESSION);
 ?>
 
 <!doctype html>
@@ -52,7 +52,7 @@ print_r($_SESSION);
                             <a href="#" class="nav-link">Contacto</a>
                         </li>
                     </ul>
-                    <a href="carrito.php" class="btn btn-primary">
+                    <a href="checkout.php" class="btn btn-primary">
                         Carrito<span id="num_cart" class="badge bg-secondary"><?php echo $num_cart; ?></span>
                     </a>
                 </div>
@@ -76,7 +76,7 @@ print_r($_SESSION);
                                 $imagen = "images/no-photo.png";
                             }
                             ?>
-                            <img src="<?php echo $imagen; ?>">
+                            <img src="<?php echo $imagen; ?>" class="card-img-top" style="height: 250px; object-fit: contain;">
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo $row['nombre']; ?></h5>
                                 <p class="card-text">$ <?php echo number_format($row['precio'], 2, '.', ','); ?></p>
@@ -100,7 +100,8 @@ print_r($_SESSION);
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
+        crossorigin="anonymous"
+        ></script>
 
 
     <script>

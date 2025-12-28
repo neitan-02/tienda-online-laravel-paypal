@@ -100,7 +100,7 @@ if ($id == '' || $token == '') {
                             <a href="#" class="nav-link">Contacto</a>
                         </li>
                     </ul>
-                    <a href="carrito.php" class="btn btn-primary">
+                    <a href="checkout.php" class="btn btn-primary">
                         Carrito<span id="num_cart" class="badge bg-secondary"><?php echo $num_cart; ?></span>
                     </a>
                 </div>
@@ -117,7 +117,7 @@ if ($id == '' || $token == '') {
                     <div id="carouselImages" class="carousel slide">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="<?php echo $rutaImg; ?>" class="d-block w-100">
+                                <img src="<?php echo $rutaImg; ?>" class="card-img-top" style="height: 250px; object-fit: contain;">
                             </div>
 
                             <?php foreach ($imagenes as $img) { ?>
